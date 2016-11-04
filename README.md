@@ -71,7 +71,7 @@ printWithVars3("You might want to check that blah and blah.")
 To run the test suite you need `py.test` installed on your machine. Then you can simply execute:
 
 ```python
-cd sysexecute
+cd tests
 py.test
 ```
 

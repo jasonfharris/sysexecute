@@ -6,17 +6,16 @@ import sysexecute
 >>> import sys, os
 >>> sys.path.append(os.path.abspath('.'))
 >>> sys.path.append(os.path.abspath('..'))
->>> sys.path.append(os.path.abspath('../..'))
 >>> from sysexecute import *
 
 Get the testsDir
 >>> theCwd = os.path.abspath('.').split(os.path.sep)
->>> if theCwd[-1] == 'sysexecute_Package':	testsDirParts = theCwd + ['sysexecute', 'tests']
->>> if theCwd[-1] == 'sysexecute':			testsDirParts = theCwd + ['tests']
+>>> if theCwd[-1] == 'sysexecute_Package':	testsDirParts = theCwd + ['tests']
+>>> if theCwd[-1] == 'sysexecute':			testsDirParts = theCwd[:-1] + ['tests']
 >>> if theCwd[-1] == 'tests':				testsDirParts = theCwd
 >>> testsDir = os.path.sep.join(testsDirParts)
->>> testsDir.split(os.path.sep)[-2:]
-['sysexecute', 'tests']
+>>> os.path.isfile(os.path.join(testsDir, "..","setup.cfg"))
+True
 
 >>> set_defaults('cwd', os.path.join(testsDir, 'sourcedirfortests'))
 >>> execute('ls *.txt', captureStdOutStdErr=True)
@@ -50,8 +49,8 @@ executing: nonExistantCommand *.txt
 (127, None, None)
 
 >>> os.chdir(testsDir)
->>> execute('ls ex*.py', 0, captureStdOutStdErr=True, cwd='..')
-(..)executing: ls ex*.py
+>>> execute('ls ex*.py', 0, captureStdOutStdErr=True, cwd='../sysexecute')
+(../sysexecute)executing: ls ex*.py
 execute.py
 (0, 'execute.py\n', '')
 
