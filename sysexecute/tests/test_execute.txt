@@ -1,0 +1,105 @@
+# --------------------------------------------------------------------------------------------------------------------------
+# Test sysexecute execute
+# --------------------------------------------------------------------------------------------------------------------------
+
+import sysexecute
+>>> import sys, os
+>>> sys.path.append(os.path.abspath('.'))
+>>> sys.path.append(os.path.abspath('..'))
+>>> sys.path.append(os.path.abspath('../..'))
+>>> from sysexecute import *
+
+Get the testsDir
+>>> theCwd = os.path.abspath('.').split(os.path.sep)
+>>> if theCwd[-1] == 'sysexecute_Package':	testsDirParts = theCwd + ['sysexecute', 'tests']
+>>> if theCwd[-1] == 'sysexecute':			testsDirParts = theCwd + ['tests']
+>>> if theCwd[-1] == 'tests':				testsDirParts = theCwd
+>>> testsDir = os.path.sep.join(testsDirParts)
+>>> testsDir.split(os.path.sep)[-2:]
+['sysexecute', 'tests']
+
+>>> set_defaults('cwd', os.path.join(testsDir, 'sourcedirfortests'))
+>>> execute('ls *.txt', captureStdOutStdErr=True)
+executing: ls *.txt
+file1.txt
+file2.txt
+(0, 'file1.txt\nfile2.txt\n', '')
+
+>>> execute('ls *.txt', 0, captureStdOutStdErr=False)
+executing: ls *.txt
+(0, None, None)
+
+>>> execute('ls *.txt', 0, captureStdOutStdErr=True, permitShowingStdOut=False)
+executing: ls *.txt
+(0, 'file1.txt\nfile2.txt\n', '')
+
+>>> execute('ls *.txt', 0, captureStdOutStdErr=True, permitShowingStdOut=False, dryRun=True)
+would execute: ls *.txt
+(0, None, None)
+
+>>> execute0('ls *.txt', permitShowingStdOut=False)
+executing: ls *.txt
+(0, 'file1.txt\nfile2.txt\n', None)
+
+>>> execute('ls *.txt', 0, captureStdOutStdErr=False)
+executing: ls *.txt
+(0, None, None)
+
+>>> execute('nonExistantCommand *.txt', captureStdOutStdErr=False, ignoreErrors=True)
+executing: nonExistantCommand *.txt
+(127, None, None)
+
+>>> os.chdir(testsDir)
+>>> execute('ls ex*.py', 0, captureStdOutStdErr=True, cwd='..')
+(..)executing: ls ex*.py
+execute.py
+(0, 'execute.py\n', '')
+
+
+>>> filterKWArgsForFunc({'cwd':'bob', 'fish':'fowle', 'stdout':'pipe'}, subprocess.Popen)
+{'cwd': 'bob', 'stdout': 'pipe'}
+
+
+
+#--------------------------------------------------------------------------------------------------------------------------
+# Test sleeping
+#--------------------------------------------------------------------------------------------------------------------------
+
+# We disable this test since it takes 2 seconds to run which is much longer than all of our other testing combined.
+#>>> sleepWithVisualization(2)
+#Sleeping for 2 seconds: ..
+
+
+
+#--------------------------------------------------------------------------------------------------------------------------
+# Test variable interpolation
+#--------------------------------------------------------------------------------------------------------------------------
+
+>>> vip = '192.168.0.1'
+>>> mode = 'stable'
+>>> stringWithVars('deploying build {mode} to {vip}')
+'deploying build stable to 192.168.0.1'
+
+>>> stringWithVars('deploying to {vip:15} on travis')
+'deploying to 192.168.0.1     on travis'
+>>> stringWithVars('deploying to {vip:<15} on travis')
+'deploying to 192.168.0.1     on travis'
+>>> stringWithVars('deploying to {vip:^15} on travis')
+'deploying to   192.168.0.1   on travis'
+>>> stringWithVars('deploying to {vip:>15} on travis')
+'deploying to     192.168.0.1 on travis'
+
+>>> def nob():
+...     print stringWithVars('deploying build {mode} to {vip} via {transport}')
+>>> def rob():
+...     transport='ssh'; nob()
+>>> rob()
+deploying build stable to 192.168.0.1 via ssh
+
+>>> def bob():
+...     for transport in ['ssh', 'http']:
+...         nob()
+
+>>> bob()
+deploying build stable to 192.168.0.1 via ssh
+deploying build stable to 192.168.0.1 via http

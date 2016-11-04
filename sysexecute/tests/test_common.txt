@@ -1,0 +1,61 @@
+# --------------------------------------------------------------------------------------------------------------------------
+# Test script_utilities execute
+# --------------------------------------------------------------------------------------------------------------------------
+
+import sysexecute
+>>> import sys, os
+>>> sys.path.append(os.path.abspath('.'))
+>>> sys.path.append(os.path.abspath('..'))
+>>> sys.path.append(os.path.abspath('../..'))
+>>> from sysexecute import *
+
+>>> prettyPrintDictionary({'cwd':'bob', 'fish':'fowle', 'stdout':'pipe'})
+   cwd : bob   
+  fish : fowle 
+stdout : pipe  
+
+>>> quiet(lambda s: 1/s, 0)
+False
+
+>>> quiet(lambda s: 1/s, 1)
+1
+
+>>> class Store:
+...     pass
+>>> test = Store()
+>>> test.fish = 'carp'
+>>> getValidAttr(test, 'fish', 'rock')
+'carp'
+
+>>> getValidAttr(test, 'dog', 'rock')
+'rock'
+
+>>> L1 = ['a', 'b', 'c']
+>>> L2 = ['b', 'c', 'd', 'e']
+>>> listRemove(L1,L2)
+['a']
+>>> listRemove(L2,L1)
+['d', 'e']
+>>> listComplement(L1,L2)
+['a', 'd', 'e']
+
+>>> L3 = ['a', 'b', 'c', 'b']
+>>> duplicateElements(L3)
+set(['b'])
+
+>>> duplicateElements(L1)
+set([])
+
+
+>>> d1={'a':1, 'b':2}
+>>> d2={'c':3, 'a':4}
+>>> prettyPrintDictionary(merge(d1,d2))
+a : 4
+b : 2
+c : 3
+
+>>> prettyPrintDictionary(merge(d2,d1))
+a : 1
+b : 2
+c : 3
+

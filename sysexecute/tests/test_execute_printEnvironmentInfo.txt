@@ -1,0 +1,32 @@
+# --------------------------------------------------------------------------------------------------------------------------
+# Test script_utilities execute
+# --------------------------------------------------------------------------------------------------------------------------
+
+import sysexecute
+>>> import sys, os
+>>> sys.path.append(os.path.abspath('.'))
+>>> sys.path.append(os.path.abspath('..'))
+>>> sys.path.append(os.path.abspath('../..'))
+>>> from sysexecute import *
+
+parse some arguments
+>>> import argparse
+>>> parser = argparse.ArgumentParser(description='Process some integers.')
+>>> dummys = parser.add_argument("--verbosity", metavar="NUM", help="foo", type=int, default=2)
+>>> dummys = parser.add_argument('--dryrun',dest='dryrun',action='store_true', help="bar")
+>>> args = parser.parse_args(['--verbosity','3'])
+
+>>> printEnvironmentInformation2(args)
+   dryrun : False    
+verbosity : 3        
+<BLANKLINE>
+
+>>> fish = 'salmon'
+>>> printEnvironmentInformation2(args, 'fish')
+   dryrun : False    
+     fish : salmon   
+verbosity : 3        
+<BLANKLINE>
+
+>>> print "hello"
+hello
