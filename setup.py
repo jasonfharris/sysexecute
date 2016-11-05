@@ -2,13 +2,13 @@ from distutils.core import setup
 setup(
     name = 'sysexecute',
     packages = ['sysexecute'], # this must be the same as the name above
-    version = '1.0.0',
+    version = '1.0.1',
     description = 'A library for simplified executing of system commands',
     author = 'Jason Harris',
     author_email = 'jason@jasonfharris.com',
     license='MIT',
     url = 'https://github.com/jasonfharris/sysexecute',
-    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.0.0', # I'll explain this in a second
+    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.0.1', # I'll explain this in a second
     keywords = ['execute', 'shell', 'system'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
