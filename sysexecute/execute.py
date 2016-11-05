@@ -209,7 +209,7 @@ def execute0(_cmd, **_kwargs): return execute(_cmd,0,**_kwargs)
 def execute1(_cmd, **_kwargs): return execute(_cmd,1,**_kwargs)
 def execute2(_cmd, **_kwargs): return execute(_cmd,2,**_kwargs)
 def execute3(_cmd, **_kwargs): return execute(_cmd,3,**_kwargs)
-
+def execute4(_cmd, **_kwargs): return execute(_cmd,4,**_kwargs)
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -240,6 +240,7 @@ def printWithVars0(_s, color='black') : printWithVars(_s,color,0)
 def printWithVars1(_s, color='black') : printWithVars(_s,color,1)
 def printWithVars2(_s, color='black') : printWithVars(_s,color,2)
 def printWithVars3(_s, color='black') : printWithVars(_s,color,3)
+def printWithVars4(_s, color='black') : printWithVars(_s,color,4)
 
 
 
