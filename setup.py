@@ -1,14 +1,22 @@
-from distutils.core import setup
+from setuptools import setup
+
+try:
+    import pypandoc
+    long_description = pypandoc.convert_file('README.md', 'rst')
+except ImportError:
+    long_description = open('README.md').read()
+
 setup(
     name = 'sysexecute',
     packages = ['sysexecute'], # this must be the same as the name above
-    version = '1.0.2',
+    version = '1.0.3',
     description = 'A library for simplified executing of system commands',
+    long_description = long_description,
     author = 'Jason Harris',
     author_email = 'jason@jasonfharris.com',
     license='MIT',
     url = 'https://github.com/jasonfharris/sysexecute',
-    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.0.2', # I'll explain this in a second
+    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.0.3',
     keywords = ['execute', 'shell', 'system'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -32,4 +40,5 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7'
         ],
+    install_requires = ['argparse', 'argcomplete']
 )
