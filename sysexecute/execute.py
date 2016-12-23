@@ -23,7 +23,7 @@ exectue_defaults = {
     'shell': True,
     'executable': '/bin/bash',
     'verbosity': 1,
-    'dryRun': False
+    'dryrun': False
 }
 
 def set_defaults(key, val):
@@ -173,13 +173,13 @@ def execute(cmd, verbosityThreshold = 1, **kwargs):
     formattedCmd = cmd.format(**getFormatBindings(cmd,1))
 
     shouldPrint = opts['verbosity'] >= verbosityThreshold
-    isDryRun = opts['dryRun']
+    isDryrun = opts['dryrun']
 
     if shouldPrint:
-        msg = "would execute:" if isDryRun else "executing:"
+        msg = "would execute:" if isDryrun else "executing:"
         pre = "("+subopts['cwd']+")" if (subopts['cwd'] != exectue_defaults['cwd']) else ""
         print "{pre}{msg} {formattedCmd}".format(pre=pre, formattedCmd=formattedCmd, msg=msg)
-    if isDryRun:
+    if isDryrun:
         return (0, None, None)
 
     printStdOut = shouldPrint and opts['permitShowingStdOut']
@@ -227,7 +227,7 @@ def stringWithVars(s):
 
 def printWithVars(s, color='black', verbosityThreshold = 1):
     global exectue_defaults
-    prefix = 'will print:' if exectue_defaults['dryRun'] else ''
+    prefix = 'will print:' if exectue_defaults['dryrun'] else ''
     if exectue_defaults['verbosity'] < verbosityThreshold:
         return
     stringToPrint = prefix + (s.format(**getFormatBindings(s,1)))

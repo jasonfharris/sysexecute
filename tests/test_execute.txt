@@ -32,7 +32,7 @@ executing: ls *.txt
 executing: ls *.txt
 (0, 'file1.txt\nfile2.txt\n', '')
 
->>> execute('ls *.txt', 0, captureStdOutStdErr=True, permitShowingStdOut=False, dryRun=True)
+>>> execute('ls *.txt', 0, captureStdOutStdErr=True, permitShowingStdOut=False, dryrun=True)
 would execute: ls *.txt
 (0, None, None)
 
