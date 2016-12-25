@@ -6,8 +6,6 @@ import subprocess
 import threading
 import Queue
 from .common import *
-import pprint
-import inspect
 import re
 
 # --------------------------------------------------------------------------------------------------------------------------
