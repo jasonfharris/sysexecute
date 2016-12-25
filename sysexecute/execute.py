@@ -21,7 +21,8 @@ exectue_defaults = {
     'shell': True,
     'executable': '/bin/bash',
     'verbosity': 1,
-    'dryrun': False
+    'dryrun': False,
+    'colorize': True
 }
 
 def set_defaults(key, val):
@@ -223,22 +224,23 @@ def stringWithVars(s):
 # printWithVars
 # --------------------------------------------------------------------------------------------------------------------------
 
-def printWithVars(s, color='black', verbosityThreshold = 1):
+def printWithVars(s, color='black', verbosityThreshold = 1, **kwargs):
     global exectue_defaults
-    prefix = 'will print:' if exectue_defaults['dryrun'] else ''
-    if exectue_defaults['verbosity'] < verbosityThreshold:
+    opts = merge(exectue_defaults, kwargs)              # the options computed from the default options together with the passed in options.
+    if opts['verbosity'] < verbosityThreshold:
         return
+    prefix = 'would print:' if opts['dryrun'] else ''
     stringToPrint = prefix + (s.format(**getFormatBindings(s,1)))
-    if color == 'black':
+    if (color == 'black') or not opts['colorize']:
         print stringToPrint
     else:
         print colored(stringToPrint, color)
 
-def printWithVars0(_s, color='black') : printWithVars(_s,color,0)
-def printWithVars1(_s, color='black') : printWithVars(_s,color,1)
-def printWithVars2(_s, color='black') : printWithVars(_s,color,2)
-def printWithVars3(_s, color='black') : printWithVars(_s,color,3)
-def printWithVars4(_s, color='black') : printWithVars(_s,color,4)
+def printWithVars0(_s, color='black', **kwargs) : printWithVars(_s, color, 0, **kwargs)
+def printWithVars1(_s, color='black', **kwargs) : printWithVars(_s, color, 1, **kwargs)
+def printWithVars2(_s, color='black', **kwargs) : printWithVars(_s, color, 2, **kwargs)
+def printWithVars3(_s, color='black', **kwargs) : printWithVars(_s, color, 3, **kwargs)
+def printWithVars4(_s, color='black', **kwargs) : printWithVars(_s, color, 4, **kwargs)
 
 
 
@@ -246,7 +248,7 @@ def printWithVars4(_s, color='black') : printWithVars(_s,color,4)
 # printEnvironmentInformation
 # --------------------------------------------------------------------------------------------------------------------------
 
-def printEnvironmentInformation(parseArgs, verbosityThreshold, *variables):
+def printEnvironmentInformation(parseArgs, verbosityThreshold, *variables, **kwargs):
     verbosity = getattr(parseArgs, 'verbosity', 2)
     if verbosity >=verbosityThreshold:
         d = vars(parseArgs)
