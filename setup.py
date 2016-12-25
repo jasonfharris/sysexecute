@@ -1,4 +1,5 @@
 from setuptools import setup
+import re
 
 try:
     import pypandoc
@@ -6,10 +7,16 @@ try:
 except ImportError:
     long_description = open('README.md').read()
 
+version = re.search(
+    '^__version__\s*=\s*"(.*)"',
+    open('sysexecute/execute.py').read(),
+    re.M
+    ).group(1)
+
 setup(
     name = 'sysexecute',
     packages = ['sysexecute'], # this must be the same as the name above
-    version = '1.0.3',
+    version = version,
     description = 'A library for simplified executing of system commands',
     long_description = long_description,
     author = 'Jason Harris',
