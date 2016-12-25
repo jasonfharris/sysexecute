@@ -203,11 +203,11 @@ def execute(cmd, verbosityThreshold = 1, **kwargs):
 
 
 # These different execute levels will print out the information at different verbosity levels
-def execute0(_cmd, **_kwargs): return execute(_cmd,0,**_kwargs)
-def execute1(_cmd, **_kwargs): return execute(_cmd,1,**_kwargs)
-def execute2(_cmd, **_kwargs): return execute(_cmd,2,**_kwargs)
-def execute3(_cmd, **_kwargs): return execute(_cmd,3,**_kwargs)
-def execute4(_cmd, **_kwargs): return execute(_cmd,4,**_kwargs)
+def execute0(_cmd, **kwargs): return execute(_cmd,0,**kwargs)
+def execute1(_cmd, **kwargs): return execute(_cmd,1,**kwargs)
+def execute2(_cmd, **kwargs): return execute(_cmd,2,**kwargs)
+def execute3(_cmd, **kwargs): return execute(_cmd,3,**kwargs)
+def execute4(_cmd, **kwargs): return execute(_cmd,4,**kwargs)
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -255,10 +255,10 @@ def printEnvironmentInformation(parseArgs, verbosityThreshold, *variables):
         prettyPrintDictionary(d)
         print ""
 
-def printEnvironmentInformation0(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,0,*_args,**_kwargs)
-def printEnvironmentInformation1(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,1,*_args,**_kwargs)
-def printEnvironmentInformation2(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,2,*_args,**_kwargs)
-def printEnvironmentInformation3(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,3,*_args,**_kwargs)
+def printEnvironmentInformation0(_parseArgs,*args,**kwargs): return printEnvironmentInformation(_parseArgs,0,*args,**kwargs)
+def printEnvironmentInformation1(_parseArgs,*args,**kwargs): return printEnvironmentInformation(_parseArgs,1,*args,**kwargs)
+def printEnvironmentInformation2(_parseArgs,*args,**kwargs): return printEnvironmentInformation(_parseArgs,2,*args,**kwargs)
+def printEnvironmentInformation3(_parseArgs,*args,**kwargs): return printEnvironmentInformation(_parseArgs,3,*args,**kwargs)
 
 
 
