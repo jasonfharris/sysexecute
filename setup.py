@@ -23,7 +23,7 @@ setup(
     author_email = 'jason@jasonfharris.com',
     license='MIT',
     url = 'https://github.com/jasonfharris/sysexecute',
-    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.0.3',
+    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.1.0',
     keywords = ['execute', 'shell', 'system'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -45,7 +45,10 @@ setup(
         # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7'
         ],
-    install_requires = ['argparse', 'argcomplete']
+    install_requires = ['argparse', 'argcomplete', 'future']
 )
