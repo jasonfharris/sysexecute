@@ -1,23 +1,33 @@
 # --------------------------------------------------------------------------------------------------------------------------
-# Test sysexecute execute
+# Test script_utilities execute
 # --------------------------------------------------------------------------------------------------------------------------
 
 import sysexecute
 >>> import sys, os
->>> sys.path.append(os.path.abspath('.'))
->>> sys.path.append(os.path.abspath('..'))
+>>> rootdir = os.path.abspath('.')
+>>> sys.path.append(rootdir)
 >>> from sysexecute import *
 
-Get the testsDir
->>> theCwd = os.path.abspath('.').split(os.path.sep)
->>> if theCwd[-1] == 'sysexecute_Package':	testsDirParts = theCwd + ['tests']
->>> if theCwd[-1] == 'sysexecute':			testsDirParts = theCwd[:-1] + ['tests']
->>> if theCwd[-1] == 'tests':				testsDirParts = theCwd
->>> testsDir = os.path.sep.join(testsDirParts)
->>> os.path.isfile(os.path.join(testsDir, "..","setup.cfg"))
+Get the path of the current script
+>>> topDir = rootdir
+>>> pathParts = topDir.split(os.path.sep)
+
+Transform the test to extract the name from test_current instead of 
+print (test_current())
+
+>>> def test_current():
+...     return re.sub(r'::.+ \(call\)', '', os.getenv('PYTEST_CURRENT_TEST'))
+
+>>> testFile = test_current()
+>>> testFileParts = testFile.split(os.path.sep)
+>>> ['tests','test_execute.txt'] == testFileParts[-2:]
 True
 
->>> set_defaults('cwd', os.path.join(testsDir, 'sourcedirfortests'))
+>>> testDir = os.path.sep.join([rootdir] + testFileParts[:-1])
+>>> sourceDirForTests = os.path.join(testDir,'sourcedirfortests')
+>>> os.chdir(sourceDirForTests)
+>>> set_execute_defaults('cwd', sourceDirForTests)
+
 >>> execute('ls *.txt', captureStdOutStdErr=True)
 executing: ls *.txt
 file1.txt
@@ -44,17 +54,17 @@ executing: ls *.txt
 executing: ls *.txt
 (0, None, None)
 
->>> execute('nonExistantCommand *.txt', captureStdOutStdErr=False, ignoreErrors=True)
+>>> execute('nonExistantCommand *.txt', captureStdOutStdErr=False, ignoreErrors=True, permitShowingStdErr=False)
 executing: nonExistantCommand *.txt
-(127, None, None)
+(127, None, '/bin/bash: nonExistantCommand: command not found\n')
 
->>> os.chdir(testsDir)
->>> execute('ls ex*.py', 0, captureStdOutStdErr=True, cwd='../sysexecute')
-(../sysexecute)executing: ls ex*.py
+>>> execute('ls ex*.py', 0, captureStdOutStdErr=True, cwd='../../sysexecute')
+(../../sysexecute)executing: ls ex*.py
 execute.py
 (0, 'execute.py\n', '')
 
-
+>>> set_execute_defaults('cwd', rootdir)
+>>> os.chdir(rootdir)
 >>> filterKWArgsForFunc({'cwd':'bob', 'fish':'fowle', 'stdout':'pipe'}, subprocess.Popen)
 {'cwd': 'bob', 'stdout': 'pipe'}
 
@@ -100,7 +110,7 @@ would print:hello
 'deploying to     192.168.0.1 on travis'
 
 >>> def nob():
-...     print stringWithVars('deploying build {mode} to {vip} via {transport}')
+...     print(stringWithVars('deploying build {mode} to {vip} via {transport}'))
 >>> def rob():
 ...     transport='ssh'; nob()
 >>> rob()

@@ -1,12 +1,17 @@
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
 import sys
 import os.path
 import time
 import inspect
 import subprocess
 import threading
-import Queue
-from .common import *
+import queue
 import re
+from .common import *
+
 
 __version__ = "1.0.6"
 
@@ -25,13 +30,19 @@ exectue_defaults = {
     'executable': '/bin/bash',
     'verbosity': 1,
     'dryrun': False,
-    'colorize': True
+    'colorize': True,
+    'encoding': 'utf8'
 }
 
-def set_defaults(key, val):
+def set_execute_defaults(key, val):
     global exectue_defaults
     exectue_defaults[key] = val
 
+def extractRunningVars(args):
+    if "verbosity" in args:
+        set_execute_defaults("verbosity", args.verbosity)
+    if "dryrun" in args:
+        set_execute_defaults("dryrun", args.dryrun)
 
 
 
@@ -51,7 +62,7 @@ def getBindings(varList, startLevel=0):
     # We start at the level of the caller of getBindings
     frame = inspect.currentframe()
     try:
-        for i in xrange(startLevel+1):
+        for i in range(startLevel+1):
             frame = frame.f_back
     except:
         raise Exception("bindings: startLevel {} is too high\n".format(startLevel))
@@ -78,7 +89,7 @@ def getBindings(varList, startLevel=0):
 
     return (bindings,varsToFind)    
 
-_reFormatVar = re.compile("\{(\w*)(:[<>=^]?\d+)?\}")
+_reFormatVar = re.compile(r"\{(\w*)(:[<>=^]?\d+)?\}")
 def getFormatBindings(s, startLevel=0):
     matches = re.findall(_reFormatVar,s)
     identifiers = [match[0] for match in matches]  # we are only interested in the identifier part in the above regex
@@ -88,6 +99,10 @@ def getFormatBindings(s, startLevel=0):
     if unbound:
         raise Exception("formatBindings: found unbound variables {unbound} for string {s}\n".format(unbound=unbound,s=s))
     return bindings
+
+# def effify(non_f_str: str):
+#     return eval(f'f"""{non_f_str}"""')
+
 
 
 
@@ -102,12 +117,12 @@ class _AsynchronousFileReader(threading.Thread):
     be consumed in another thread.
     '''
     
-    def __init__(self, fd, queue):
-        assert isinstance(queue, Queue.Queue)
+    def __init__(self, fd, q):
+        assert isinstance(q, queue.Queue)
         assert callable(fd.readline)
         threading.Thread.__init__(self)
         self._fd = fd
-        self._queue = queue
+        self._queue = q
  
     def run(self):
         '''The body of the tread: read lines and put them on the queue.'''
@@ -126,10 +141,10 @@ def _AsynchronouslyGetProcessOutput(formattedCmd, printStdOut, printStdErr, **kw
     process = subprocess.Popen(formattedCmd, **opts)
 
     # Launch the asynchronous readers of the process' stdout and stderr.
-    stdout_queue = Queue.Queue()
+    stdout_queue = queue.Queue()
     stdout_reader = _AsynchronousFileReader(process.stdout, stdout_queue)
     stdout_reader.start()
-    stderr_queue = Queue.Queue()
+    stderr_queue = queue.Queue()
     stderr_reader = _AsynchronousFileReader(process.stderr, stderr_queue)
     stderr_reader.start()
 
@@ -142,17 +157,17 @@ def _AsynchronouslyGetProcessOutput(formattedCmd, printStdOut, printStdErr, **kw
             line = stdout_queue.get()
             stdOutLines.append(line)
             if printStdOut:
-                print line.rstrip()
+                print(line.rstrip())
  
         # Show what we received from standard error.
         while not stderr_queue.empty():
             line = stderr_queue.get()
             stdErrLines.append(line)
             if printStdErr:
-                print colored(line.rstrip(),'red')
+                print(colored(line.rstrip(),'red'))
  
         # Sleep a bit before asking the readers again.
-        time.sleep(.05)
+        time.sleep(.01)
  
     # Let's be tidy and join the threads we've started.
     stdout_reader.join()
@@ -182,7 +197,7 @@ def execute(cmd, verbosityThreshold = 1, **kwargs):
     if shouldPrint:
         msg = "would execute:" if isDryrun else "executing:"
         pre = "("+subopts['cwd']+")" if (subopts['cwd'] != exectue_defaults['cwd']) else ""
-        print "{pre}{msg} {formattedCmd}".format(pre=pre, formattedCmd=formattedCmd, msg=msg)
+        print("{pre}{msg} {formattedCmd}".format(pre=pre, formattedCmd=formattedCmd, msg=msg))
     if isDryrun:
         return (0, None, None)
 
@@ -201,7 +216,7 @@ def execute(cmd, verbosityThreshold = 1, **kwargs):
         stdErr = res[1]
 
     if returnCode and not opts['ignoreErrors']:
-        print colored('Command {} failed with return code {}!'.format(cmd, returnCode),'red')
+        print(colored('Command {} failed with return code {}!'.format(cmd, returnCode),'red'))
         sys.exit(returnCode)
     
     # always print any errors
@@ -209,11 +224,12 @@ def execute(cmd, verbosityThreshold = 1, **kwargs):
 
 
 # These different execute levels will print out the information at different verbosity levels
-def execute0(_cmd, **kwargs): return execute(_cmd,0,**kwargs)
-def execute1(_cmd, **kwargs): return execute(_cmd,1,**kwargs)
-def execute2(_cmd, **kwargs): return execute(_cmd,2,**kwargs)
-def execute3(_cmd, **kwargs): return execute(_cmd,3,**kwargs)
-def execute4(_cmd, **kwargs): return execute(_cmd,4,**kwargs)
+def execute0(_cmd, **_kwargs): return execute(_cmd,0,**_kwargs)
+def execute1(_cmd, **_kwargs): return execute(_cmd,1,**_kwargs)
+def execute2(_cmd, **_kwargs): return execute(_cmd,2,**_kwargs)
+def execute3(_cmd, **_kwargs): return execute(_cmd,3,**_kwargs)
+def execute4(_cmd, **_kwargs): return execute(_cmd,4,**_kwargs)
+
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -237,15 +253,15 @@ def printWithVars(s, color='black', verbosityThreshold = 1, **kwargs):
     prefix = 'would print:' if opts['dryrun'] else ''
     stringToPrint = prefix + (s.format(**getFormatBindings(s,1)))
     if (color == 'black') or not opts['colorize']:
-        print stringToPrint
+        print(stringToPrint)
     else:
-        print colored(stringToPrint, color)
+        print(colored(stringToPrint, color))
 
-def printWithVars0(_s, color='black', **kwargs) : printWithVars(_s, color, 0, **kwargs)
-def printWithVars1(_s, color='black', **kwargs) : printWithVars(_s, color, 1, **kwargs)
-def printWithVars2(_s, color='black', **kwargs) : printWithVars(_s, color, 2, **kwargs)
-def printWithVars3(_s, color='black', **kwargs) : printWithVars(_s, color, 3, **kwargs)
-def printWithVars4(_s, color='black', **kwargs) : printWithVars(_s, color, 4, **kwargs)
+def printWithVars0(_s, color='black',**_kwargs) : printWithVars(_s,color,0,**_kwargs)
+def printWithVars1(_s, color='black',**_kwargs) : printWithVars(_s,color,1,**_kwargs)
+def printWithVars2(_s, color='black',**_kwargs) : printWithVars(_s,color,2,**_kwargs)
+def printWithVars3(_s, color='black',**_kwargs) : printWithVars(_s,color,3,**_kwargs)
+def printWithVars4(_s, color='black',**_kwargs) : printWithVars(_s,color,4,**_kwargs)
 
 
 
@@ -253,19 +269,20 @@ def printWithVars4(_s, color='black', **kwargs) : printWithVars(_s, color, 4, **
 # printEnvironmentInformation
 # --------------------------------------------------------------------------------------------------------------------------
 
-def printEnvironmentInformation(parseArgs, verbosityThreshold, *variables, **kwargs):
+def printEnvironmentInformation(parseArgs, verbosityThreshold, *variables):
     verbosity = getattr(parseArgs, 'verbosity', 2)
     if verbosity >=verbosityThreshold:
         d = vars(parseArgs)
         (bindings,unbound) = getBindings(variables,2)
         d.update(bindings)
         prettyPrintDictionary(d)
-        print ""
+        print("")
 
-def printEnvironmentInformation0(_parseArgs,*args,**kwargs): return printEnvironmentInformation(_parseArgs,0,*args,**kwargs)
-def printEnvironmentInformation1(_parseArgs,*args,**kwargs): return printEnvironmentInformation(_parseArgs,1,*args,**kwargs)
-def printEnvironmentInformation2(_parseArgs,*args,**kwargs): return printEnvironmentInformation(_parseArgs,2,*args,**kwargs)
-def printEnvironmentInformation3(_parseArgs,*args,**kwargs): return printEnvironmentInformation(_parseArgs,3,*args,**kwargs)
+def printEnvironmentInformation0(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,0,*_args,**_kwargs)
+def printEnvironmentInformation1(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,1,*_args,**_kwargs)
+def printEnvironmentInformation2(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,2,*_args,**_kwargs)
+def printEnvironmentInformation3(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,3,*_args,**_kwargs)
+def printEnvironmentInformation4(_parseArgs,*_args,**_kwargs): return printEnvironmentInformation(_parseArgs,4,*_args,**_kwargs)
 
 
 

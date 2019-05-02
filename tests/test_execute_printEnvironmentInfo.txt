@@ -5,7 +5,6 @@
 import sysexecute
 >>> import sys, os
 >>> sys.path.append(os.path.abspath('.'))
->>> sys.path.append(os.path.abspath('..'))
 >>> from sysexecute import *
 
 parse some arguments
@@ -27,5 +26,5 @@ verbosity : 3
 verbosity : 3        
 <BLANKLINE>
 
->>> print "hello"
+>>> print("hello")
 hello

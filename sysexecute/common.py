@@ -1,4 +1,9 @@
+from __future__ import print_function
+from builtins import str
 import inspect
+import sys
+
+
 # --------------------------------------------------------------------------------------------------------------------------
 # Text utilities
 # --------------------------------------------------------------------------------------------------------------------------
@@ -22,16 +27,24 @@ def colored(text, *attrs):
 # Filtering utilities
 # --------------------------------------------------------------------------------------------------------------------------
 
+
+if sys.version_info[0] <= 2:
+    def getArgumentList(f):
+        return inspect.getargspec(f)[0]
+else:
+    def getArgumentList(f):
+        return [key for key in inspect.signature(f).parameters]
+
 def _getValidArgList(f):
     if inspect.isfunction(f): 
-        return inspect.getargspec(f)[0]
+        return getArgumentList(f)
     if hasattr(f, '__init__'):
-        return inspect.getargspec(f.__init__)[0]
+        return getArgumentList(f.__init__)
     raise Exception("Unknown object")
 
 def filterKWArgsForFunc(kwargs, f):
     '''Yield a reduced set of kwargs of only the valid keyword arguments for the function / constructor f'''
-    return dict([(k, v) for k, v in kwargs.iteritems() if k in _getValidArgList(f)])
+    return dict([(k, v) for k, v in list(kwargs.items()) if k in _getValidArgList(f)])
 
 def listIntersection(L1,L2):
     L2set = set(L2)
@@ -46,6 +59,10 @@ def listComplement(L1,L2):
     L1set = set(L1)
     return listRemove(L1,L2) + listRemove(L2,L1)
 
+def listUnion(L1,L2):
+    L2set = set(L2)
+    return [a for a in L2set.union(L1)]
+    
 def duplicateElements(L):
     seen = set()
     duplicated = set()
@@ -66,11 +83,11 @@ def prettyPrintDictionary(d):
     '''Pretty print a dictionary as simple keys and values'''
     maxKeyLength = 0
     maxValueLength = 0
-    for key, value in d.iteritems():
+    for key, value in list(d.items()):
         maxKeyLength = max(maxKeyLength, len(key))
         maxValueLength = max(maxValueLength, len(key))
     for key in sorted(d.keys()):
-        print ("%"+str(maxKeyLength)+"s : %-" + str(maxValueLength)+ "s") % (key,d[key])
+        print(("%"+str(maxKeyLength)+"s : %-" + str(maxValueLength)+ "s") % (key,d[key]))
 
 
 

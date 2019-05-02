@@ -5,7 +5,6 @@
 import sysexecute
 >>> import sys, os
 >>> sys.path.append(os.path.abspath('.'))
->>> sys.path.append(os.path.abspath('..'))
 >>> from sysexecute import *
 
 >>> prettyPrintDictionary({'cwd':'bob', 'fish':'fowle', 'stdout':'pipe'})
@@ -16,8 +15,8 @@ stdout : pipe
 >>> quiet(lambda s: 1/s, 0)
 False
 
->>> quiet(lambda s: 1/s, 1)
-1
+>>> quiet(lambda s: 1/s, 1.0)
+1.0
 
 >>> class Store:
 ...     pass
@@ -39,12 +38,11 @@ False
 ['a', 'd', 'e']
 
 >>> L3 = ['a', 'b', 'c', 'b']
->>> duplicateElements(L3)
-set(['b'])
+>>> duplicateElements(L3) == set(['b'])
+True
 
->>> duplicateElements(L1)
-set([])
-
+>>> duplicateElements(L1) == set([])
+True
 
 >>> d1={'a':1, 'b':2}
 >>> d2={'c':3, 'a':4}
