@@ -1,4 +1,20 @@
 import inspect
+# --------------------------------------------------------------------------------------------------------------------------
+# Text utilities
+# --------------------------------------------------------------------------------------------------------------------------
+
+_ColorsDictionary = {
+    'grey':30,    'red':31,    'green':32,    'yellow':33,    'blue':34,    'magenta':35,    'cyan':36,    'white':37,
+    'on_grey':40, 'on_red':41, 'on_green':42, 'on_yellow':44, 'on_blue':44, 'on_magenta':45, 'on_cyan':46, 'on_white':47,
+    'bold':1, 'dark':2, 'underline':4, 'blink':5, 'reverse':7, 'concealed':8
+}
+
+def colored(text, *attrs):
+    prefix = ''
+    for attr in attrs:
+        if attr in _ColorsDictionary:
+            prefix += '\033[%dm' % _ColorsDictionary[attr]
+    return prefix+text+"\033[00m"
 
 
 
