@@ -23,7 +23,7 @@ setup(
     author_email = 'jason@jasonfharris.com',
     license='MIT',
     url = 'https://github.com/jasonfharris/sysexecute',
-    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.1.0',
+    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.1.1',
     keywords = ['execute', 'shell', 'system'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
