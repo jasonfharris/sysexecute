@@ -1,0 +1,40 @@
+# --------------------------------------------------------------------------------------------------------------------------
+# Test script_utilities networking
+# --------------------------------------------------------------------------------------------------------------------------
+
+# Load the package
+>>> import sys, os
+>>> sys.path.append(os.path.abspath('.'))
+>>> from sysexecute import *
+
+
+# IP utilities
+>>> ip2Long('192.168.2.32')
+3232236064
+>>> long2ip(3232236064)
+'192.168.2.32'
+
+>>> maskByIP('192.168.2.196', '255.255.255.0')
+'192.168.2.0'
+
+>>> subnetOfIp('192.168.3.108')
+'192.168.3'
+>>> subnetOfIp('192.168.3.108',2)
+'192.168'
+>>> validIP('192.168.2.32')
+True
+>>> validIP('192.168.2.255')
+True
+>>> validIP('192.168.2.256')
+False
+
+>>> octetFromIP('192.168.2.256', 0)
+'192'
+>>> octetFromIP('192.168.2.256', 1)
+'168'
+
+
+>>> reachable('localhost')
+True
+>>> reachable('some.non.existent.domain', timeout=0.5)
+False
