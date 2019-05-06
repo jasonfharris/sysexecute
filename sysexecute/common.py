@@ -34,7 +34,8 @@ if sys.version_info[0] <= 2:
         return inspect.getargspec(f)[0]
 else:
     def getArgumentList(f):
-        return [key for key in inspect.signature(f).parameters]
+        params = inspect.signature(f).parameters
+        return [key for key in params]
 
 def _getValidArgList(f):
     if inspect.isfunction(f): 
@@ -45,7 +46,8 @@ def _getValidArgList(f):
 
 def filterKWArgsForFunc(kwargs, f):
     '''Yield a reduced set of kwargs of only the valid keyword arguments for the function / constructor f'''
-    return dict([(k, v) for k, v in list(kwargs.items()) if k in _getValidArgList(f)])
+    validArgs = _getValidArgList(f)
+    return dict([(k, v) for k, v in list(kwargs.items()) if k in validArgs])
 
 def listIntersection(L1,L2):
     L2set = set(L2)
@@ -61,8 +63,8 @@ def listComplement(L1,L2):
     return listRemove(L1,L2) + listRemove(L2,L1)
 
 def listUnion(L1,L2):
-    L2set = set(L2)
-    return [a for a in L2set.union(L1)]
+    unionSet = set(L2).union(L1)
+    return [a for a in unionSet]
     
 def duplicateElements(L):
     seen = set()
