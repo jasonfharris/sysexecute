@@ -7,11 +7,7 @@ try:
 except ImportError:
     long_description = open('README.md').read()
 
-version = re.search(
-    '^__version__\s*=\s*"(.*)"',
-    open('sysexecute/execute.py').read(),
-    re.M
-    ).group(1)
+version = '1.1.4'
 
 setup(
     name = 'sysexecute',
@@ -23,7 +19,7 @@ setup(
     author_email = 'jason@jasonfharris.com',
     license='MIT',
     url = 'https://github.com/jasonfharris/sysexecute',
-    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/1.1.1',
+    download_url = 'https://github.com/jasonfharris/sysexecute/tarball/'+version,
     keywords = ['execute', 'shell', 'system'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

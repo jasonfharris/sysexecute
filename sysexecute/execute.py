@@ -13,7 +13,6 @@ import re
 from .common import *
 
 
-__version__ = "1.1.1"
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -110,6 +109,20 @@ def getFormatBindings(s, startLevel=0):
 # Command Execution
 # --------------------------------------------------------------------------------------------------------------------------
 
+# From Python3.0 to Python 3.5 inclusive string handling changed for unicode / bytes
+# strings.  In Python3.6 we got the encoding option to Popen.  For versions in between we
+# now need decode the bytes into a unicode string and deal with utf-8 encoded strings
+# everywhere.
+
+if sys.version_info[0] >= 3 and sys.version_info[1] < 6:
+    def _sanitizeBytes(s):
+        if isinstance(s, bytes):
+            return s.decode("utf-8")
+else:
+    def _sanitizeBytes(s):
+        return s
+
+
 class _AsynchronousFileReader(threading.Thread):
     '''
     Helper class to implement asynchronous reading of a file
@@ -127,7 +140,9 @@ class _AsynchronousFileReader(threading.Thread):
     def run(self):
         '''The body of the tread: read lines and put them on the queue.'''
         for line in iter(self._fd.readline, ''):
-            self._queue.put(line)
+            if line == b'':
+                return
+            self._queue.put(_sanitizeBytes(line))
  
     def eof(self):
         '''Check whether there is no more content to expect.'''
@@ -212,8 +227,8 @@ def execute(cmd, verbosityThreshold = 1, **kwargs):
         process = subprocess.Popen(formattedCmd, **subopts)
         res = process.communicate()
         returnCode = process.returncode
-        stdOut = res[0]
-        stdErr = res[1]
+        stdOut = _sanitizeBytes(res[0])
+        stdErr = _sanitizeBytes(res[1])
 
     if returnCode and not opts['ignoreErrors']:
         print(colored('Command {} failed with return code {}!'.format(cmd, returnCode),'red'))
