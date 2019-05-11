@@ -8,6 +8,7 @@ import re
 import subprocess
 import socket
 import sys
+import datetime
 from .common import *
 from .execute import *
 
@@ -27,6 +28,33 @@ def reachable(host, timeout=2):
     ping_response = execute("ping -c1 -W{timeout} {host}", **opts)[1]
     return ('1 packets transmitted, 1 received' in ping_response) or ('1 packets transmitted, 1 packets received' in ping_response)
 
+
+def waitForHostWithVisualization(host, timeout=100, exitOnTimeout=False, msg=None):
+    def now():
+        return datetime.datetime.now()
+    if msg:
+        sys.stdout.write(msg)
+    start_time = now()
+    def elapsed():
+        return (now() - start_time).total_seconds()
+
+    count = 0
+    while count < timeout and not reachable(host, 1):
+        sys.stdout.write('.')
+        sys.stdout.flush()
+        count += 1
+        waitTime = count - elapsed()
+        if waitTime > 0:
+            time.sleep(waitTime)
+        if elapsed() > timeout:
+            if exitOnTimeout:
+                printWithVars('\nFailed to reach {host} after {timeout} seconds!','red')
+                sys.exit(1)
+            return False
+        
+    delta_seconds = '{:.2f}s'.format(elapsed())
+    sys.stdout.write(' ( '+ delta_seconds + ' )\n')
+    return True
 
 
 # --------------------------------------------------------------------------------------------------------------------------
