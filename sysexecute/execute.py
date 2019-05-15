@@ -30,7 +30,8 @@ exectue_defaults = {
     'verbosity': 1,
     'dryrun': False,
     'colorize': True,
-    'encoding': 'utf8'
+    'encoding': 'utf8',
+    'flush': False
 }
 
 def set_execute_defaults(key, val):
@@ -114,13 +115,25 @@ def getFormatBindings(s, startLevel=0):
 # now need decode the bytes into a unicode string and deal with utf-8 encoded strings
 # everywhere.
 
-if sys.version_info[0] >= 3 and sys.version_info[1] < 6:
+if (3,0) <= sys.version_info[:2] <= (3,5):
     def _sanitizeBytes(s):
         if isinstance(s, bytes):
             return s.decode("utf-8")
 else:
     def _sanitizeBytes(s):
         return s
+
+# From Python 3.3 onwards we can pass the flush argument to print
+if sys.version_info[:2] < (3,3):
+    # https://bit.ly/2Yno1n7
+    old_print = print
+    def print(*args, **kwargs):
+        flush = kwargs.pop('flush', False)
+        old_print(*args, **kwargs)
+        if flush:
+            file = kwargs.get('file', sys.stdout)
+            # Why might file=None? IDK, but it works for print(i, file=None)
+            file.flush() if file is not None else sys.stdout.flush()
 
 
 class _AsynchronousFileReader(threading.Thread):
