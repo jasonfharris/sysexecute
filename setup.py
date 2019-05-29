@@ -1,13 +1,9 @@
 from setuptools import setup
-import re
 
-try:
-    import pypandoc
-    long_description = pypandoc.convert_file('README.md', 'rst')
-except ImportError:
-    long_description = open('README.md').read()
+with open('README.md') as f:
+    long_description = f.read()
 
-version = '1.1.5'
+version = '1.1.8'
 
 setup(
     name = 'sysexecute',
@@ -15,6 +11,7 @@ setup(
     version = version,
     description = 'A library for simplified executing of system commands',
     long_description = long_description,
+    long_description_content_type='text/markdown',  # This is important!
     author = 'Jason Harris',
     author_email = 'jason@jasonfharris.com',
     license='MIT',

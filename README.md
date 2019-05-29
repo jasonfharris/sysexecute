@@ -56,7 +56,7 @@ There are various keyword options you can specify like:
 Often in scripting we want to include debugging / info commentary depending on what level of verbosity we are requested to display. You can set the level of verbosity shown via eg:
 
 ```
-set_defaults('verbosity',2)
+set_execute_defaults('verbosity',2)
 ```
 
 Then in the following only the first two strings would be printed:
