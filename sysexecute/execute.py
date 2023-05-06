@@ -1,6 +1,3 @@
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 from builtins import range
 import sys
 import os.path
@@ -19,7 +16,7 @@ from .common import *
 # Argument Parsing
 # --------------------------------------------------------------------------------------------------------------------------
 
-exectue_defaults = {
+execute_defaults = {
     'permitShowingStdOut': True,
     'permitShowingStdErr': True,
     'captureStdOutStdErr': False,
@@ -35,8 +32,8 @@ exectue_defaults = {
 }
 
 def set_execute_defaults(key, val):
-    global exectue_defaults
-    exectue_defaults[key] = val
+    global execute_defaults
+    execute_defaults[key] = val
 
 def extractRunningVars(args):
     if "verbosity" in args:
@@ -81,7 +78,7 @@ def getBindings(varList, startLevel=0):
         globalKeys = set(varsToFind).intersection(frameGlobals)
         for v in globalKeys:
             bindings[v]=frameGlobals[v]
-        varsToFind -= localKeys
+        varsToFind -= globalKeys
         if not varsToFind:
             return (bindings,varsToFind)
 
@@ -214,8 +211,8 @@ def _AsynchronouslyGetProcessOutput(formattedCmd, printStdOut, printStdErr, **kw
 #returns (returncode, stdout, stderr)
 def execute(cmd, verbosityThreshold = 1, **kwargs):
     '''execute the passed in command in the shell'''
-    global exectue_defaults
-    opts = merge(exectue_defaults, kwargs)              # the options computed from the default options together with the passed in options.
+    global execute_defaults
+    opts = merge(execute_defaults, kwargs)              # the options computed from the default options together with the passed in options.
     subopts = filterKWArgsForFunc(opts, subprocess.Popen)
     formattedCmd = cmd.format(**getFormatBindings(cmd,1))
 
@@ -224,7 +221,7 @@ def execute(cmd, verbosityThreshold = 1, **kwargs):
 
     if shouldPrint:
         msg = "would execute:" if isDryrun else "executing:"
-        pre = "("+subopts['cwd']+")" if (subopts['cwd'] != exectue_defaults['cwd']) else ""
+        pre = "("+subopts['cwd']+")" if (subopts['cwd'] != execute_defaults['cwd']) else ""
         print("{pre}{msg} {formattedCmd}".format(pre=pre, formattedCmd=formattedCmd, msg=msg))
     if isDryrun:
         return (0, None, None)
@@ -274,8 +271,8 @@ def stringWithVars(s):
 # --------------------------------------------------------------------------------------------------------------------------
 
 def printWithVars(s, color='black', verbosityThreshold = 1, **kwargs):
-    global exectue_defaults
-    opts = merge(exectue_defaults, kwargs)              # the options computed from the default options together with the passed in options.
+    global execute_defaults
+    opts = merge(execute_defaults, kwargs)              # the options computed from the default options together with the passed in options.
     if opts['verbosity'] < verbosityThreshold:
         return
     prefix = 'would print:' if opts['dryrun'] else ''
