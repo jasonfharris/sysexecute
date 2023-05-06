@@ -3,7 +3,7 @@ from setuptools import setup
 with open('README.md') as f:
     long_description = f.read()
 
-version = '1.1.8'
+version = '1.2.1'
 
 setup(
     name = 'sysexecute',
@@ -36,12 +36,12 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7'
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11'
         ],
-    install_requires = ['argparse', 'argcomplete', 'future']
+    install_requires = ['argcomplete']
 )
